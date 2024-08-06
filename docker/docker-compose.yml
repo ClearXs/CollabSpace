@@ -1,0 +1,48 @@
+version: '3'
+services:
+  onlyoffice:
+    image: onlyoffice/documentserver:8.1
+    restart: always
+    environment:
+      - JWT_ENABLED=true
+      - JWT_SECRET=onlyoffice
+    volumes:
+      - /opt/document/onlyoffice/logs:/var/log/onlyoffice
+      - /opt/document/onlyoffice/data:/var/www/onlyoffice/Data
+      - /opt/document/onlyoffice/config:/etc/onlyoffice/documentserver
+      - /opt/document/onlyoffice/App_Data:/var/lib/onlyoffice/documentserver/App_Data
+    ports:
+      - 8890:80
+    networks:
+      - allio_net
+  office-service:
+    container_name: office-service
+    image: ${REGISTRY}/document:${VERSION}
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - '8700:8700'
+    privileged: true
+    restart: always
+    networks:
+      - allio_net
+    depends_on:
+      - onlyoffice
+  office-web:
+    container_name: office-web
+    image: ${REGISTRY}/document-web:${VERSION}
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - '8230:3000'
+    privileged: true
+    restart: always
+    networks:
+      - allio_net
+    depends_on:
+      - onlyoffice
+      - office-service
+
+networks:
+  allio_net:
+    external: true
