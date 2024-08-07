@@ -1,9 +1,12 @@
 [submodule "office-editor"]
 	path = office-editor
 	url = https://github.com/ClearXs/office-editor.git
+	branch=master
 [submodule "office-service"]
 	path = office-service
 	url = https://github.com/ClearXs/office-service.git
+	branch=main
 [submodule "office-web"]
 	path = office-web
 	url = https://github.com/ClearXs/office-web.git
+	branch=master
