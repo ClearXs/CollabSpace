@@ -4,30 +4,50 @@ services:
     image: onlyoffice/documentserver:8.1
     restart: always
     environment:
+      - TZ=Asia/Shanghai
       - JWT_ENABLED=true
       - JWT_SECRET=onlyoffice
     volumes:
-      - /opt/document/onlyoffice/logs:/var/log/onlyoffice
-      - /opt/document/onlyoffice/data:/var/www/onlyoffice/Data
-      - /opt/document/onlyoffice/config:/etc/onlyoffice/documentserver
-      - /opt/document/onlyoffice/App_Data:/var/lib/onlyoffice/documentserver/App_Data
+      - ./onlyoffice/logs:/var/log/onlyoffice
+      - ./onlyoffice/data:/var/www/onlyoffice/Data
+      - ./onlyoffice/config:/etc/onlyoffice/documentserver
+      - ./onlyoffice/App_Data:/var/lib/onlyoffice/documentserver/App_Data
     ports:
-      - 8890:80
+      - "8890:80"
     networks:
-      - allio_net
+      allio_net:
+        - ipv4_address: 172.32.0.2
+
   office-service:
     container_name: office-service
     image: ${REGISTRY}/document:${VERSION}
     environment:
       - TZ=Asia/Shanghai
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_TIMEOUT=${REDIS_TIMEOUT}
+      - REDIS_DATABASE=${REDIS_DATABASE}
+      - DATASOURCE_URL=${DATASOURCE_URL}
+      - DATASOURCE_USERNAME=${DATASOURCE_USERNAME}
+      - DATASOURCE_PASSWORD=${DATASOURCE_PASSWORD}
+      - OSS_ENDPOINT=${OSS_ENDPOINT}
+      - OSS_ACCESS_KEY=${OSS_ACCESS_KEY}
+      - OSS_SECRET_KEY=${OSS_SECRET_KEY}
+      - OSS_BUCKET=${OSS_BUCKET}
+      - DOCUMENT_SERVER_URL=${DOCUMENT_SERVER_URL}
+      - ONLYOFFICE_SERVER_URL=${ONLYOFFICE_SERVER_URL}
+      - ONLYOFFICE_SECRET=${ONLYOFFICE_SECRET}
     ports:
       - '8700:8700'
     privileged: true
     restart: always
     networks:
-      - allio_net
+      allio_net:
+        - ipv4_address: 172.32.0.3
     depends_on:
       - onlyoffice
+
   office-web:
     container_name: office-web
     image: ${REGISTRY}/document-web:${VERSION}
@@ -38,11 +58,17 @@ services:
     privileged: true
     restart: always
     networks:
-      - allio_net
+      allio_net:
+        - ipv4_address: 172.32.0.3
     depends_on:
       - onlyoffice
       - office-service
 
 networks:
   allio_net:
-    external: true
+    driver: bridge
+    ipam:
+      config:
+        subnet: 172.32.0.0/24
+        gateway: 172.32.0.1
+

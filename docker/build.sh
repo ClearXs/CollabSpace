@@ -12,7 +12,7 @@ function build() {
   docker push ${REGISTRY}/document-web:${VERSION}
 
   # service
-  docker build --platform linux/x86_64 -t ${REGISTRY}/document:${VERSION} .
+  docker build --platform linux/x86_64 -t ${REGISTRY}/office-service:${VERSION} .
 
   docker push ${REGISTRY}/document:${VERSION}
 }
