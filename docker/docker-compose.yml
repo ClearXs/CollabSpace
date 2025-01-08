@@ -6,21 +6,21 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - JWT_ENABLED=true
-      - JWT_SECRET=onlyoffice
+      - JWT_SECRET=${ONLYOFFICE_SECRET}
     volumes:
       - ./onlyoffice/logs:/var/log/onlyoffice
       - ./onlyoffice/data:/var/www/onlyoffice/Data
       - ./onlyoffice/config:/etc/onlyoffice/documentserver
       - ./onlyoffice/App_Data:/var/lib/onlyoffice/documentserver/App_Data
     ports:
-      - "8890:80"
+      - '8890:80'
     networks:
-      allio_net:
-        - ipv4_address: 172.32.0.2
+      allio_office_net:
+        ipv4_address: 172.32.0.2
 
   office-service:
     container_name: office-service
-    image: ${REGISTRY}/document:${VERSION}
+    image: ${REGISTRY}/office-service:${VERSION}
     environment:
       - TZ=Asia/Shanghai
       - REDIS_HOST=${REDIS_HOST}
@@ -43,14 +43,14 @@ services:
     privileged: true
     restart: always
     networks:
-      allio_net:
-        - ipv4_address: 172.32.0.3
+      allio_office_net:
+        ipv4_address: 172.32.0.3
     depends_on:
       - onlyoffice
 
   office-web:
     container_name: office-web
-    image: ${REGISTRY}/document-web:${VERSION}
+    image: ${REGISTRY}/office-web:${VERSION}
     environment:
       - TZ=Asia/Shanghai
     ports:
@@ -58,17 +58,15 @@ services:
     privileged: true
     restart: always
     networks:
-      allio_net:
-        - ipv4_address: 172.32.0.3
+      allio_office_net:
+        ipv4_address: 172.32.0.4
     depends_on:
       - onlyoffice
       - office-service
 
 networks:
-  allio_net:
+  allio_office_net:
     driver: bridge
     ipam:
       config:
-        subnet: 172.32.0.0/24
-        gateway: 172.32.0.1
-
+        - subnet: 172.32.0.0/24
