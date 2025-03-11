@@ -10,7 +10,6 @@ services:
     volumes:
       - ./onlyoffice/logs:/var/log/onlyoffice
       - ./onlyoffice/data:/var/www/onlyoffice/Data
-      - ./onlyoffice/config:/etc/onlyoffice/documentserver
       - ./onlyoffice/App_Data:/var/lib/onlyoffice/documentserver/App_Data
     ports:
       - '8890:80'

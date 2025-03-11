@@ -18,8 +18,8 @@ function build() {
 }
 
 function save() {
-  docker save ${REGISTRY}/document:${VERSION} > ./document-${VERSION}.tar
-  docker save ${REGISTRY}/document-web:${VERSION} > ./document-web-${VERSION}.tar
+  docker save ${REGISTRY}/document:${VERSION} >./document-${VERSION}.tar
+  docker save ${REGISTRY}/document-web:${VERSION} >./document-web-${VERSION}.tar
 }
 
 case "$1" in
