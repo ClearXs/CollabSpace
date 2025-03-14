@@ -52,6 +52,7 @@ services:
     image: ${REGISTRY}/office-web:${VERSION}
     environment:
       - TZ=Asia/Shanghai
+      - NEXT_PUBLIC_API_URL=${DOCUMENT_SERVER_URL}
     ports:
       - '8230:3000'
     privileged: true
